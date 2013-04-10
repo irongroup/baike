@@ -4,21 +4,30 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+import org.apache.log4j.Logger;
+
+import com.irongroup.response.CommandResponse;
+import com.irongroup.response.PicMessageResponse;
 import com.irongroup.unit.CommonUnit;
 import com.irongroup.unit.DomParse;
+import com.irongroup.unit.PrivateCache;
 import com.irongroup.unit.XmlDocument;
+import com.sina.sae.fetchurl.SaeFetchurl;
+import com.sina.sae.memcached.SaeMemcache;
 
 public class WeixinServlet extends HttpServlet {
 
@@ -66,44 +75,12 @@ public class WeixinServlet extends HttpServlet {
 		XmlDocument xd=new DomParse();
 		InputStream	 is=new ByteArrayInputStream(message.getBytes());
 		Map<String, String> map= xd.parserXml(is);
+		String response=CommandResponse.execute(map);
 		
-		String queryString=map.get("Content");
+		resp.setCharacterEncoding("utf-8");
+		resp.getWriter().print(response);
 		
 		
-		StringBuffer response=new StringBuffer("<xml>");
-//		 <xml>
-//		 <ToUserName><![CDATA[toUser]]></ToUserName>
-//		 <FromUserName><![CDATA[fromUser]]></FromUserName>
-//		 <CreateTime>12345678</CreateTime>
-//		 <MsgType><![CDATA[text]]></MsgType>
-//		 <Content><![CDATA[content]]></Content>
-//		 <FuncFlag>0</FuncFlag>
-//		 </xml>
-		response.append("<ToUserName><![CDATA[");
-		response.append(map.get("FromUserName"));
-		response.append("]]></ToUserName>");
-		response.append("<FromUserName><![CDATA[");
-		response.append(map.get("ToUserName"));
-		response.append("]]></FromUserName>");
-		response.append("<CreateTime>");
-		response.append(System.currentTimeMillis());
-		response.append("</CreateTime>");
-		response.append("<MsgType><![CDATA[");
-		response.append("text");
-		response.append("]]></MsgType>");
-		response.append("<Content><![CDATA[");
-		response.append("hello...");
-		response.append("]]></Content>");
-		response.append("<FuncFlag>");
-		response.append("0");
-		response.append("</FuncFlag>");
-		response.append("</xml>");
-		logger.info(sb.toString()); // sb为POST过来的数据
-		logger.info(response.toString());
-		resp.getWriter().print(response.toString());
-		logger.info(req.getQueryString());
-		logger.info(req.getPathInfo());
-		logger.info(req.getRequestURI());
 	}
 
 }

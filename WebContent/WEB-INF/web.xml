@@ -4,6 +4,9 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
 	<display-name>baike</display-name>
+	<listener>
+		<listener-class>com.irongroup.servlet.InitListener</listener-class>
+	</listener>
 	<servlet>
 		<servlet-name>WeixinServlet</servlet-name>
 		<servlet-class>com.irongroup.servlet.WeixinServlet</servlet-class>
@@ -11,6 +14,22 @@
 	<servlet-mapping>
 		<servlet-name>WeixinServlet</servlet-name>
 		<url-pattern>/weixin</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>MockServlet</servlet-name>
+		<servlet-class>com.irongroup.servlet.MockServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MockServlet</servlet-name>
+		<url-pattern>/mock</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>com.irongroup.servlet.InitServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>InitServlet</servlet-name>
+		<url-pattern>/init</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
