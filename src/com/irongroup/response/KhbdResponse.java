@@ -45,7 +45,7 @@ public class KhbdResponse {
 			response.append("]]></Title>");
 			response.append("<Description><![CDATA[]]></Description>");
 			response.append("<PicUrl><![CDATA[]]></PicUrl>");
-			response.append("<Url><![CDATA["+json.getString("href")+"]]></Url>");
+			response.append("<Url><![CDATA["+json.getString("bookUrl")+"]]></Url>");
 			response.append("</item>");
 			end=end+1;
 			if (end==9) {
@@ -100,7 +100,7 @@ public class KhbdResponse {
 			response.append("]]></Title>");
 			response.append("<Description><![CDATA[]]></Description>");
 			response.append("<PicUrl><![CDATA[]]></PicUrl>");
-			response.append("<Url><![CDATA["+json.getString("href")+"]]></Url>");
+			response.append("<Url><![CDATA["+json.getString("bookUrl")+"]]></Url>");
 			response.append("</item>");
 			end=end+1;
 			if (end==10) {

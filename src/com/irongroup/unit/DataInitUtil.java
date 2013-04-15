@@ -5,12 +5,35 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import com.sina.sae.fetchurl.SaeFetchurl;
 
 public class DataInitUtil {
 	private static Logger logger = Logger.getLogger(DataInitUtil.class);
+	public static void initTop200(){
+		SaeFetchurl fetchUrl = new SaeFetchurl();
+		String content = fetchUrl
+				.fetch("http://api.lkong.net/top250.json");
+		logger.debug("json:" + content);
+		List<JSONObject> list = new ArrayList<JSONObject>();
+		JSONArray jsonArray = JSONArray.fromObject(content);
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JSONObject json=jsonArray.getJSONObject(i);
+			String url="http://www.lkong.net/book/"+json.getString("bid")+".html";
+			content = fetchUrl
+					.fetch(url);
+			String bookUrl=SaeFetchUrl.getBookUrl(content);
+			json.put("bookUrl", bookUrl);
+			list.add(json);
+			if (i%10==0) {
+				logger.info("top200 init."+i);
+				PrivateCache.set("top250", list);
+			}
+		}
+		PrivateCache.set("top250", list);
+	}
 	public static void initCache(){
 		SaeFetchurl fetchUrl = new SaeFetchurl();
 		String content = fetchUrl.fetch("http://www.lkong.net/book.php");

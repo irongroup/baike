@@ -45,7 +45,7 @@ public class PicMessageResponse {
 			response.append("]]></Title>");
 			response.append("<Description><![CDATA[]]></Description>");
 			response.append("<PicUrl><![CDATA[]]></PicUrl>");
-			response.append("<Url><![CDATA[http://www.lkong.net/book/"+json.getString("bid")+".html]]></Url>");
+			response.append("<Url><![CDATA["+json.getString("bookUrl")+"]]></Url>");
 			response.append("</item>");
 			end=end+1;
 			if (end==9) {
@@ -102,7 +102,7 @@ public class PicMessageResponse {
 //			response.append("<PicUrl><![CDATA["+json.getString("bookpic")+"]]></PicUrl>");
 			response.append("<Description><![CDATA[]]></Description>");
 			response.append("<PicUrl><![CDATA[]]></PicUrl>");
-			response.append("<Url><![CDATA[http://www.lkong.net/book/"+json.getString("bid")+".html]]></Url>");
+			response.append("<Url><![CDATA["+json.getString("bookUrl")+"]]></Url>");
 			response.append("</item>");
 			end=end+1;
 			if (end==10) {

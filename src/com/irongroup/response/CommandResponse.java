@@ -50,33 +50,8 @@ public class CommandResponse {
 		} else if (queryString.equalsIgnoreCase("M")) {
 			// SaeMemcache mc=new SaeMemcache("127.0.0.1", 11211);
 			// mc.init();
-			if (PrivateCache.get("top250") == null) {
-				SaeFetchurl fetchUrl = new SaeFetchurl();
-				String content = fetchUrl
-						.fetch("http://api.lkong.net/top250.json");
-				logger.debug("json:" + content);
-				List<JSONObject> list = new ArrayList<JSONObject>();
-				JSONArray jsonArray = JSONArray.fromObject(content);
-				for (int i = 0; i < jsonArray.size(); i++) {
-					list.add(jsonArray.getJSONObject(i));
-				}
-				PrivateCache.set("top250", list);
-			}
-
 			response = PicMessageResponse.getPicMessageResponse(map);
 		} else if (queryString.equalsIgnoreCase("n")) {
-			if (PrivateCache.get("top250") == null) {
-				SaeFetchurl fetchUrl = new SaeFetchurl();
-				String content = fetchUrl
-						.fetch("http://api.lkong.net/top250.json");
-				logger.debug("json:" + content);
-				List<JSONObject> list = new ArrayList<JSONObject>();
-				JSONArray jsonArray = JSONArray.fromObject(content);
-				for (int i = 0; i < jsonArray.size(); i++) {
-					list.add(jsonArray.getJSONObject(i));
-				}
-				PrivateCache.set("top250", list);
-			}
 			response = PicMessageResponse.getNextPicMessageResponse(map);
 		} else if (queryString.equalsIgnoreCase("a")) {
 			response = QlxsResponse.getPicMessageResponse(map);

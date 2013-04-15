@@ -19,6 +19,7 @@ import com.sina.sae.memcached.SaeMemcache;
 public class SaeFetchUrl {
 	private static Logger logger=Logger.getLogger(SaeFetchurl.class);
 	public static void getBook(List<JSONObject> list, String regex, String input){
+		SaeFetchurl fetchUrl = new SaeFetchurl();
 		Pattern pattern= Pattern.compile(regex);
 		Matcher matcher=pattern.matcher(input);
 		while (matcher.find()) {
@@ -29,14 +30,39 @@ public class SaeFetchUrl {
 				String rate=matcher2.group(1);
 				String href=matcher2.group(2);
 				String title=matcher2.group(3);
-				logger.info(rate+"-"+href+"-"+title);
 				JSONObject jsonObject=new JSONObject();
 				jsonObject.put("rate", rate);
 				jsonObject.put("name", title);
 				jsonObject.put("href", href);
+				String content = fetchUrl.fetch(href);
+				String bookUrl=getBookUrl(content);
+				logger.info(rate+"-"+href+"-"+title+"-"+bookUrl);
+				jsonObject.put("bookUrl", bookUrl);
 				list.add(jsonObject);
 			}
 		}
+	}
+	public static String getBookUrl(String content){
+		Pattern pattern2= Pattern.compile("<span class=\"pl\">传送门:</span> <a href=\"([\\s\\S]*?)\" title=\"([\\s\\S]*?)\">([\\s\\S]*?)</a>");
+		Matcher matcher2=pattern2.matcher(content);
+		String wapUrl="";
+		String orignalUrl="";
+		while (matcher2.find()) {
+			orignalUrl=matcher2.group(3);
+			String number=orignalUrl.substring(orignalUrl.lastIndexOf("/")+1, orignalUrl.lastIndexOf("."));
+			if (orignalUrl.contains("qidian")||orignalUrl.contains("qdmm")) {
+				wapUrl="http://m.qidian.com/Book/ShowBook.aspx?bookid="+number;
+			}else if (orignalUrl.contains("17k")) {
+				wapUrl="http://3g.17k.com/wap2/bookshow.aspx?bookid=99911751266"+number+"&page=1";
+			}else if (orignalUrl.contains("zongheng")) {
+				wapUrl="http://wap.zongheng.com/book?bookid="+number;
+			}else if (orignalUrl.contains("jjwxc")) {
+				wapUrl=orignalUrl.replace("http://www.jjwxc.net/onebook.php?novelid=", "http://m.jjwxc.com/book2/");
+			}else {
+				wapUrl=orignalUrl;
+			}
+		}
+		return wapUrl;
 	}
 	public static void main(String[] args) {
 		SaeFetchurl fetchUrl = new SaeFetchurl();
@@ -90,26 +116,47 @@ public class SaeFetchUrl {
 		logger.info("-------------潜力新书----------");
 		for (int j = 0; j < qlxs.size(); j++) {
 			JSONObject json= qlxs.get(j);
-			logger.info(json.get("name")+"-"+json.getString("rate")+"-"+json.getString("href"));
+			content = fetchUrl.fetch(json.getString("href"));
+			String wapUrl=getBookUrl(content);
+			logger.info(wapUrl);
+			json.put("bookUrl", wapUrl);
+//			logger.info(json.toString());
+//			logger.info(json.get("name")+"-"+json.getString("rate")+"-"+json.getString("href"));
 		}
-		logger.info("-------------好评连载----------");
-		for (int j = 0; j < hslz.size(); j++) {
-			JSONObject json= hslz.get(j);
-			logger.info(json.get("name")+"-"+json.getString("rate")+"-"+json.getString("href"));
-		}
-		logger.info("-------------完本好书----------");
-		for (int j = 0; j < wbhs.size(); j++) {
-			JSONObject json= wbhs.get(j);
-			logger.info(json.get("name")+"-"+json.getString("rate")+"-"+json.getString("href"));
-		}
-		logger.info("-------------葵花宝典----------");
-		for (int j = 0; j < khbd.size(); j++) {
-			JSONObject json= khbd.get(j);
-			logger.info(json.get("name")+"-"+json.getString("rate")+"-"+json.getString("href"));
-		}
-//		SaeMemcache mc=new SaeMemcache("127.0.0.1", 11211);
-//		mc.init();
-//		mc.add("top250", content);
+//		logger.info("-------------好评连载----------");
+//		for (int j = 0; j < hslz.size(); j++) {
+//			JSONObject json= hslz.get(j);	
+//			content = fetchUrl.fetch(json.getString("href"));
+//			String wapUrl=getBookUrl(content);
+//			logger.info(wapUrl);
+//			json.put("bookUrl", wapUrl);
+////			logger.info(json.get("name")+"-"+json.getString("rate")+"-"+json.getString("href"));
+//		}
+//		logger.info("-------------完本好书----------");
+//		for (int j = 0; j < wbhs.size(); j++) {
+//			JSONObject json= wbhs.get(j);
+//			content = fetchUrl.fetch(json.getString("href"));
+//			String wapUrl=getBookUrl(content);
+//			logger.info(wapUrl);
+//			json.put("bookUrl", wapUrl);
+////			logger.info(json.get("name")+"-"+json.getString("rate")+"-"+json.getString("href"));
+//		}
+//		logger.info("-------------葵花宝典----------");
+//		for (int j = 0; j < khbd.size(); j++) {
+//			JSONObject json= khbd.get(j);
+//			content = fetchUrl.fetch(json.getString("href"));
+//			String wapUrl=getBookUrl(content);
+//			logger.info(wapUrl);
+//			json.put("bookUrl", wapUrl);
+////			logger.info(json.get("name")+"-"+json.getString("rate")+"-"+json.getString("href"));
+//		}
+		SaeMemcache mc=new SaeMemcache("127.0.0.1", 11211);
+		mc.init();
+		
+		mc.set("qlxs", qlxs);
+		mc.set("hslz", hslz);
+		mc.set("wbhs", wbhs);
+		mc.set("khbd", khbd);
 //		System.err.println(content.getBytes().length);
 //		JSONArray jsonArray=JSONArray.fromObject(mc.get("top250"));
 //		for (int i = 0; i < jsonArray.size(); i++) {

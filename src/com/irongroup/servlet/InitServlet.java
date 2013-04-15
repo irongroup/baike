@@ -29,7 +29,13 @@ public class InitServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		DataInitUtil.initCache();
+		String parameter=req.getParameter("a");
+		if (parameter.equals("a") ) {
+			DataInitUtil.initCache();
+		}else if(parameter.equals("b")){
+			DataInitUtil.initTop200();
+		}
+		resp.getWriter().print("done.");
 	}
 	
 }

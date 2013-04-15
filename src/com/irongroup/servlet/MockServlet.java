@@ -1,7 +1,6 @@
 package com.irongroup.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -9,14 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 
 import com.irongroup.unit.PrivateCache;
-import com.sina.sae.fetchurl.SaeFetchurl;
-import com.sina.sae.memcached.SaeMemcache;
 
 public class MockServlet extends HttpServlet {
 
@@ -46,6 +42,19 @@ public class MockServlet extends HttpServlet {
 		String parameter = req.getParameter("action");
 		resp.setContentType("text/html; charset=utf-8");
 		StringBuffer sb = new StringBuffer("<!DOCTYPE HTML>");
+		sb.append("<html>");
+		sb.append("<head>");
+		sb.append("	<meta charset=\"utf-8\"/>");
+		sb.append("	<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,user-scalable=no\"/>");
+		sb.append("	<title>网文推荐 推荐好书</title>");
+		sb.append("	<style type=\"text/css\">");
+		sb.append("	h1	{color: #000;font-size: 20px;font-weight: bold;word-break: normal;word-wrap: break-word;}");
+		sb.append("	li	{list-style-type:none;font-size:18px;line-height: 150%;position: relative;overflow: visible;}");
+		sb.append("	body	{background: #f8f7f5;-webkit-overflow-scrolling: touch;font-family: Helvetica,STHeiti STXihei,Microsoft JhengHei,Microsoft YaHei,Tohoma,Arial;}");
+		sb.append("	a	{color: #3e3e3e}");
+		sb.append("	</style>");
+		sb.append("</head>");
+		sb.append("<body>");
 		if (parameter.equals("getAll")) {
 			sb.append("<header>");
 			sb.append("<h1>龙空推书TOP250</h1>");
@@ -55,7 +64,7 @@ public class MockServlet extends HttpServlet {
 			List<JSONObject> list=(List<JSONObject>) PrivateCache.get("top250");
 			for (int i = 0; i < list.size(); i++) {
 				JSONObject json= list.get(i);
-				sb.append("<li><a href=\"http://www.lkong.net/book/"+json.getString("bid")+".html\">"+(i+1)+"."+json.getString("name")+"-"+json.getString("author")+"("+json.getString("rate")+")"+"</a></li>");
+				sb.append("<li>"+(i+1)+"."+"<a href=\""+json.getString("bookUrl")+"\">"+json.getString("name")+"-"+json.getString("author")+"("+json.getString("rate")+")"+"</a></li>");
 			}
 			sb.append("<ul>");
 			sb.append("</nav>");
@@ -68,7 +77,7 @@ public class MockServlet extends HttpServlet {
 			List<JSONObject> list=(List<JSONObject>) PrivateCache.get("qlxs");
 			for (int i = 0; i < list.size(); i++) {
 				JSONObject json= list.get(i);
-				sb.append("<li><a href=\""+json.getString("href")+"\">"+(i+1)+"."+json.getString("name")+"-"+"("+json.getString("rate")+")"+"</a></li>");
+				sb.append("<li>"+(i+1)+"."+"<a href=\""+json.getString("bookUrl")+"\">"+json.getString("name")+"-"+"("+json.getString("rate")+")"+"</a></li>");
 			}
 			sb.append("<ul>");
 			sb.append("</nav>");
@@ -81,7 +90,7 @@ public class MockServlet extends HttpServlet {
 			List<JSONObject> list=(List<JSONObject>) PrivateCache.get("hslz");
 			for (int i = 0; i < list.size(); i++) {
 				JSONObject json= list.get(i);
-				sb.append("<li><a href=\""+json.getString("href")+"\">"+(i+1)+"."+json.getString("name")+"-"+"("+json.getString("rate")+")"+"</a></li>");
+				sb.append("<li>"+(i+1)+"."+"<a href=\""+json.getString("bookUrl")+"\">"+json.getString("name")+"-"+"("+json.getString("rate")+")"+"</a></li>");
 			}
 			sb.append("<ul>");
 			sb.append("</nav>");
@@ -94,7 +103,7 @@ public class MockServlet extends HttpServlet {
 			List<JSONObject> list=(List<JSONObject>) PrivateCache.get("wbhs");
 			for (int i = 0; i < list.size(); i++) {
 				JSONObject json= list.get(i);
-				sb.append("<li><a href=\""+json.getString("href")+"\">"+(i+1)+"."+json.getString("name")+"-"+"("+json.getString("rate")+")"+"</a></li>");
+				sb.append("<li>"+(i+1)+"."+"<a href=\""+json.getString("bookUrl")+"\">"+json.getString("name")+"-"+"("+json.getString("rate")+")"+"</a></li>");
 			}
 			sb.append("<ul>");
 			sb.append("</nav>");
@@ -107,11 +116,13 @@ public class MockServlet extends HttpServlet {
 			List<JSONObject> list=(List<JSONObject>) PrivateCache.get("khbd");
 			for (int i = 0; i < list.size(); i++) {
 				JSONObject json= list.get(i);
-				sb.append("<li><a href=\""+json.getString("href")+"\">"+(i+1)+"."+json.getString("name")+"-"+"("+json.getString("rate")+")"+"</a></li>");
+				sb.append("<li>"+(i+1)+"."+"<a href=\""+json.getString("bookUrl")+"\">"+json.getString("name")+"-"+"("+json.getString("rate")+")"+"</a></li>");
 			}
 			sb.append("<ul>");
 			sb.append("</nav>");
 		}
+		sb.append("</body>");
+		sb.append("</html>");
 		resp.getWriter().print(sb.toString());
 	}
 
